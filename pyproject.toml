@@ -1,0 +1,51 @@
+[project]
+name = "vaas"
+requires-python = ">=3.10"
+dynamic = ["version"]
+description = "VAAS (Vision-Attention Anomaly Scoring) is a dual-module vision framework for image anomaly detection and localisation."
+readme = "README.md"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Opeyemi Bamigbade" },
+    { name = "Mark Scanlon" },
+    { name = "John Sheppard" },
+]
+
+dependencies = [
+  "transformers>=4.40",
+  "numpy",
+  "pillow",
+  "tqdm",
+  "scipy",
+  "opencv-python-headless",
+]
+
+[dependency-groups]
+
+torch = [
+  "torch>=2.2",
+  "torchvision>=0.17",
+]
+
+cuda-dev = [
+  "torch==2.10.0.dev20251203+cu128",
+  "torchvision==0.25.0.dev20251203+cu128"
+]
+
+dev = [
+  "pre-commit>=4.5.0",
+  "pytest",
+  "pytest-cov"
+]
+
+[tool.setuptools.packages.find]
+include = ["vaas*"]
+exclude = ["tests*"]
+
+[tool.uv]
+index-url = "https://pypi.org/simple"
+extra-index-url = ["https://download.pytorch.org/whl/nightly/cu128"]
+index-strategy = "unsafe-best-match"
+
+[tool.setuptools.dynamic]
+version = {attr = "vaas._version.__version__"}

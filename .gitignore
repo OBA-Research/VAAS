@@ -1,0 +1,14 @@
+.ENV
+.venv
+.venv_*/
+__pycache__/
+dist/
+
+*.egg-info/
+
+
+checkpoints/
+DEVELOPER_GUIDE.md
+hfREADME.md
+hf_artifact
+# .github/
