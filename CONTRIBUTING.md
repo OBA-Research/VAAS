@@ -85,4 +85,27 @@ When reporting an issue, include:
 
 ---
 
+## 6. Example Notebooks (Colab / Jupyter)
+
+We welcome notebook contributions that help users understand and apply VAAS.
+
+Suggested topics:
+
+- Basic inference walkthrough  
+- Visualising anomaly maps with Matplotlib  
+- Running VAAS on entire folders or batches  
+- Exploring α and score behaviour  
+- Device configuration (CPU / CUDA / MPS)  
+- Using Hugging Face `from_pretrained`  
+
+**Notebook requirements:**
+
+- Place all notebooks under `examples/notebooks/`
+- Must run top-to-bottom without manual intervention
+- Prefer publicly accessible images / HF dataset samples
+- Keep runtime lightweight (no training)
+- Colab-friendly where possible
+
+---
+
 Thank you for contributing to VAAS.
