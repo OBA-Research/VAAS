@@ -54,3 +54,10 @@ index-strategy = "unsafe-best-match"
 
 [tool.setuptools.dynamic]
 version = {attr = "vaas._version.__version__"}
+
+[tool.ruff]
+exclude = [
+    "examples/notebooks/",
+]
+
+

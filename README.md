@@ -94,6 +94,24 @@ Future updates will include:
 
 ---
 
+## Example Notebooks
+
+A set of runnable example notebooks covering:
+
+
+These cover:
+
+- Quick-start inference with VAAS  
+- Visualising anomaly maps  
+- Batch / folder inference  
+- How S_F, S_P, and S_H are combined  
+- Device selection (CPU, CUDA, MPS)
+
+If you would like to contribute a notebook, see  
+**[CONTRIBUTING.md](CONTRIBUTING.md)** for guidelines.
+
+---
+
 ## Roadmap
 
 - Cross-dataset evaluation  
@@ -103,6 +121,14 @@ Future updates will include:
 - Extended anomaly-map visualisation  
 - Streamlit/Gradio demo (optional)  
 - ONNX / TorchScript export  
+
+---
+
+## Contributing
+
+We welcome contributions that improve the usability, robustness, and extensibility of VAAS.
+
+Please see the full guidelines in **[CONTRIBUTING.md](CONTRIBUTING.md)**.
 
 ---
 
