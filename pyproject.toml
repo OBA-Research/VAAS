@@ -21,6 +21,7 @@ dependencies = [
 ]
 
 [dependency-groups]
+default = []
 
 torch = [
   "torch>=2.2",
@@ -29,13 +30,17 @@ torch = [
 
 cuda-dev = [
   "torch==2.10.0.dev20251203+cu128",
-  "torchvision==0.25.0.dev20251203+cu128"
+  "torchvision==0.25.0.dev20251203+cu128",
 ]
 
 dev = [
   "pre-commit>=4.5.0",
   "pytest",
-  "pytest-cov"
+  "pytest-cov",
+  "ruff",
+  "black",
+  "isort",
+  "flake8",
 ]
 
 [tool.setuptools.packages.find]

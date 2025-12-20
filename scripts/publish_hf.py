@@ -1,11 +1,12 @@
 import argparse
-import os
 import json
+import os
+import shutil
+
 import torch
 from huggingface_hub import HfApi, create_repo
 
 from vaas.inference.pipeline import VAASPipeline
-import shutil
 
 
 def main():
@@ -61,8 +62,6 @@ def main():
     except Exception as e:
         print(f"Repository creation skipped or failed: {e}")
 
-
-
     src_pipeline_dir = os.path.join("vaas", "inference")
     dst_pipeline_dir = os.path.join(output_dir, "vaas", "inference")
 
@@ -78,13 +77,11 @@ def main():
         os.path.join(dst_pipeline_dir, "utils.py"),
     )
 
-
     api.upload_folder(
         folder_path=output_dir,
         repo_id=args.repo_id,
         repo_type="model",
     )
-
 
     print(f"Published VAAS model to https://huggingface.co/{args.repo_id}")
 

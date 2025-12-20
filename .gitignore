@@ -1,14 +1,49 @@
-.ENV
+# Python cache / bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+.pytest_cache/
+.ruff_cache/
+
+
+
+# Virtual environments
 .venv
 .venv_*/
-__pycache__/
+ENV/
+env/
+.ENV
+
+
+# Build / packaging artifacts
 dist/
-
+build/
 *.egg-info/
+*.egg
 
 
+# Project-specific exclusions
 checkpoints/
+hf_artifact/
 DEVELOPER_GUIDE.md
 hfREADME.md
-hf_artifact
-# .github/
+
+
+# Tooling / editor
+.vscode/
+.idea/
+.ipynb_checkpoints/
+.cache/
+pytest_cache/
+.hypothesis/
+
+
+# uv / lock files
+uv.lock
+
+
+# OS / Misc.
+.DS_Store
+Thumbs.db
