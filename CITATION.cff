@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+title: "VAAS: Vision-Attention Anomaly Scoring"
+message: "If you use this software, please cite it as below."
+type: software
+
+authors:
+  - family-names: Bamigbade
+    given-names: Opeyemi
+    orcid: https://orcid.org/0009-0006-9391-0442
+
+  - family-names: Scanlon
+    given-names: Mark
+    orcid: https://orcid.org/0000-0002-6581-7164
+
+  - family-names: Sheppard
+    given-names: John
+    orchid: https://orcid.org/0000-0003-4212-0329
+
+version: 0.1.7
+date-released: 2025-12-26
+repository-code: https://github.com/OBA-Research/VAAS
+license: MIT
