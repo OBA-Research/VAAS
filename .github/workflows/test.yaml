@@ -28,17 +28,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          source .venv/bin/activate
-          uv sync --active
-          uv sync --active --group torch
-          uv sync --active --group dev
+          uv sync
+          uv sync --group torch
+          uv sync --group dev
 
       - name: Install VAAS
         run: |
-          source .venv/bin/activate
-          uv pip install --active -e .
+          uv pip install -e .
 
       - name: Run tests
         run: |
-          source .venv/bin/activate
-          pytest -v
+          uv run --active --group torch pytest -q
