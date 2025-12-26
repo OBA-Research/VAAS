@@ -47,7 +47,7 @@ https://pytorch.org/get-started/locally/
 
 ---
 
-## Quick Inference Example
+## Basic Inference Example
 
 ```python
 from vaas.inference.pipeline import VAASPipeline
@@ -75,6 +75,32 @@ print(out["S_H"])
     "anomaly_map": numpy.ndarray  # shape (224, 224)
 }
 ```
+
+## Inference with visual explanation
+
+VAAS can also generate a qualitative visualization combining:
+
+- Patch-level anomaly heatmaps (Px)
+- Global attention maps (Fx)
+- Final hybrid anomaly score (S_H)
+
+```python
+pipeline.visualize(
+    image="image.jpg",
+    save_path="vaas_visualization.png",
+    mode="all",        # options: "all", "px", "binary", "fx"
+    threshold=0.5,
+)
+```
+
+This will save a figure containing:
+
+* Original image
+* Patch-level anomaly overlays
+* Global attention overlays
+* A gauge-style visualization of the hybrid anomaly score
+
+![Inference with visual example](./methodology.png)
 
 ---
 

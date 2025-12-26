@@ -1,20 +1,27 @@
 # Contributing to VAAS
 
-Thank you for your interest in improving **VAAS (Vision-Attention Anomaly Scoring)**.  
-This guide explains how to set up the development environment and how to contribute changes.
+Thank you for your interest in improving **VAAS (Vision-Attention Anomaly Scoring)**.
+This document defines the **rules and expectations** for contributing to the VAAS codebase.
 
-## NOTE
+---
 
-- Torch must not be imported at import-time of public APIs.
-- Torch may be imported freely inside internal modules.
+## Important Design Constraints (Read First)
+
+- **PyTorch must NOT be imported at import-time of public APIs**
+  - Public entry points (e.g. `vaas.inference.pipeline`) must remain importable without torch.
+- **PyTorch may be imported freely inside internal logic**
+  - Internal functions, methods, and execution paths may require torch.
+- Lazy-loading is a **hard requirement**, not a preference.
+
+If a change breaks CI-safe imports, it will not be accepted.
 
 ---
 
 ## 1. Development Environment
 
-VAAS uses **uv** for dependency and environment management.
+VAAS uses **uv** for environment and dependency management.
 
-Create and activate the environment:
+Create and activate the development environment:
 
 ```bash
 uv venv
@@ -23,94 +30,125 @@ uv sync
 uv pip install -e .
 ```
 
-Run project tasks:
+Verify installation:
 
 ```bash
-make          # runs format + lint + test
+python -c "import vaas; print(vaas.__version__)"
+```
+
+---
+
+## 2. Common Project Tasks
+
+Run the full local workflow:
+
+```bash
+make
+```
+
+Individual commands:
+
+```bash
+make format        # code formatting (ruff)
+make lint          # linting (ruff)
+make test-smoke    # CI-safe tests (no torch)
+make test-integration  # local tests with torch
+make build         # build wheel + sdist
+```
+
+---
+
+## 3. Code Style & Quality
+
+Formatting and linting are enforced with **ruff**.
+
+Before submitting any change, ensure:
+
+```bash
 make format
 make lint
-make test
-make build
+```
+
+Pre-commit hooks are required:
+
+```bash
+pre-commit install
+pre-commit run --all-files
 ```
 
 ---
 
-## 2. Code Style
+## 4. Testing Requirements
 
-Formatting:
-
-```bash
-make format
-```
-
-Linting:
+All contributions must pass:
 
 ```bash
-make lint
+make test-smoke
 ```
 
-All submitted code must pass both.
+If your change affects inference behavior, also run:
+
+```bash
+make test-integration
+```
+
+New features should include corresponding tests where applicable.
 
 ---
 
-## 3. Tests
-
-Run tests locally:
-
-```bash
-make test
-```
-
-All new functionality should include or update relevant tests.
-
----
-
-## 4. Pull Requests
+## 5. Pull Request Guidelines
 
 Before opening a PR:
 
-1. Ensure tests pass  
-2. Run `make format` and `make lint`  
-3. Keep changes focused and well-scoped  
-4. Update documentation where needed  
+1. Tests pass locally
+2. Code is formatted and linted
+3. Changes are focused and minimal
+4. Documentation is updated if behavior changes
 
-Open the pull request against the **main** branch.
-
----
-
-## 5. Issues
-
-When reporting an issue, include:
-
-- Python version  
-- OS  
-- VAAS version  
-- Steps to reproduce  
-- Relevant logs or error messages  
+Open pull requests **against the `main` branch**.
 
 ---
 
-## 6. Example Notebooks (Colab / Jupyter)
+## 6. Issue Reporting
 
-We welcome notebook contributions that help users understand and apply VAAS.
+When reporting a bug or issue, please include:
+
+- Python version
+- Operating system
+- VAAS version
+- Installation method (pip / editable / wheel)
+- Steps to reproduce
+- Full error traceback if available
+
+Incomplete reports may be closed.
+
+---
+
+## 7. Example Notebooks (Optional Contributions)
+
+Notebook contributions are welcome and encouraged.
 
 Suggested topics:
 
-- Basic inference walkthrough  
-- Visualising anomaly maps with Matplotlib  
-- Running VAAS on entire folders or batches  
-- Exploring α and score behaviour  
-- Device configuration (CPU / CUDA / MPS)  
-- Using Hugging Face `from_pretrained`  
+- Basic inference walkthrough
+- Visualising anomaly maps
+- Batch / folder-level inference
+- Effect of α on anomaly scores
+- Device selection (CPU / CUDA / MPS)
+- Hugging Face `from_pretrained` usage
 
-**Notebook requirements:**
+**Notebook rules:**
 
-- Place all notebooks under `examples/notebooks/`
-- Must run top-to-bottom without manual intervention
-- Prefer publicly accessible images / HF dataset samples
-- Keep runtime lightweight (no training)
+- Place under `examples/notebooks/`
+- Must run top-to-bottom without manual edits
+- No training code
+- Lightweight runtime
+- Prefer public or sample images
 - Colab-friendly where possible
 
 ---
 
-Thank you for contributing to VAAS.
+## Final Note
+
+VAAS prioritizes **stability, clarity, and reproducibility** over rapid feature growth.
+Thank you for contributing.
