@@ -160,18 +160,27 @@ Please see the full guidelines in **[CONTRIBUTING.md](CONTRIBUTING.md)**.
 
 ## Citation
 
-To cite this work, please use:
+If you use VAAS in your research, please cite both the software and the associated paper as appropriate.
 
 ```python
 @software{vaas,
-  author       = {Bamigbade, Opeyemi and Scanlon, Mark and Sheppard, John},
   title        = {VAAS: Vision-Attention Anomaly Scoring},
+  author       = {Bamigbade, Opeyemi and Scanlon, Mark and Sheppard, John},
   year         = {2025},
   publisher    = {Zenodo},
   doi          = {10.5281/zenodo.18064355},
   url          = {https://doi.org/10.5281/zenodo.18064355}
 }
 
+```
+
+```python
+@article{bamigbade2025vaas,
+  title={VAAS: Vision-Attention Anomaly Scoring for Image Manipulation Detection in Digital Forensics},
+  author={Bamigbade, Opeyemi and Scanlon, Mark and Sheppard, John},
+  journal={arXiv preprint arXiv:2512.15512},
+  year={2025}
+}
 ```
 
 ---
