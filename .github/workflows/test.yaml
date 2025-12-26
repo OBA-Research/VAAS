@@ -5,19 +5,27 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: Install UV
+      - name: Install uv
         run: pip install uv
 
-      - name: Sync project
-        run: uv sync --group dev
+      - name: Create venv
+        run: uv venv .venv
+
+      - name: Install project (editable)
+        run: |
+          source .venv/bin/activate
+          uv pip install -e .[dev, torch]
 
       - name: Run tests
-        run: uv run pytest
+        run: |
+          source .venv/bin/activate
+          pytest -v
