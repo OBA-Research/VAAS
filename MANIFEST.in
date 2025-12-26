@@ -4,13 +4,19 @@ global-exclude *.py[cod]
 global-exclude *$py.class
 
 # Exclude build artifacts
-exclude build/
-exclude dist/
-exclude *.egg-info/
+prune build/
+prune dist/
+prune *.egg-info/
 
 # Exclude tests from source distribution
 prune tests/
 
+# Exclude notebooks
+prune examples/notebooks/
+
 # Include essential metadata files
 include README.md
 include LICENSE
+
+# Include version file
+include vaas/_version.py

@@ -77,6 +77,11 @@ def main():
         os.path.join(dst_pipeline_dir, "utils.py"),
     )
 
+    shutil.copy(
+        os.path.join(src_pipeline_dir, "visualize.py"),
+        os.path.join(dst_pipeline_dir, "visualize.py"),
+    )
+
     api.upload_folder(
         folder_path=output_dir,
         repo_id=args.repo_id,

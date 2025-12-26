@@ -18,6 +18,7 @@ dependencies = [
   "tqdm",
   "scipy",
   "opencv-python-headless",
+  "matplotlib>=3.10.8",
 ]
 
 [dependency-groups]
@@ -38,9 +39,6 @@ dev = [
   "pytest",
   "pytest-cov",
   "ruff",
-  "black",
-  "isort",
-  "flake8",
 ]
 
 [tool.setuptools.packages.find]
@@ -55,9 +53,24 @@ index-strategy = "unsafe-best-match"
 [tool.setuptools.dynamic]
 version = {attr = "vaas._version.__version__"}
 
+
 [tool.ruff]
 exclude = [
     "examples/notebooks/",
 ]
+line-length = 88
+target-version = "py310"
+
+lint.select = [
+  "E",  # pycodestyle errors
+  "F",  # pyflakes
+  "I",  # import sorting
+  "B",  # bugbear
+  "UP", # pyupgrade
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
 
 
