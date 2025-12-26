@@ -3,6 +3,11 @@
 Thank you for your interest in improving **VAAS (Vision-Attention Anomaly Scoring)**.  
 This guide explains how to set up the development environment and how to contribute changes.
 
+## NOTE
+
+- Torch must not be imported at import-time of public APIs.
+- Torch may be imported freely inside internal modules.
+
 ---
 
 ## 1. Development Environment

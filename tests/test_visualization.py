@@ -1,11 +1,12 @@
+import os
+
 import pytest
 
 pytest.importorskip("torch")
+pytestmark = pytest.mark.integration
 
 
 def test_visualization():
-    import os
-
     import numpy as np
     from PIL import Image
 
@@ -33,11 +34,6 @@ def test_visualization():
         mode="all",
     )
 
-    assert os.path.exists(save_path), "Visualization file was not created"
+    assert os.path.exists(save_path)
 
-    print("VAAS visualization test passed")
-    print(f"Saved visualization to: {save_path}")
-
-
-if __name__ == "__main__":
-    test_visualization()
+    os.remove(save_path)

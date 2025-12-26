@@ -1,12 +1,15 @@
+from __future__ import annotations
+
 import math
 import os
 
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-import torch
 from matplotlib.patches import Wedge
 from PIL import Image
+
+from vaas.utils.helpers import require_torch
 
 
 def visualize_inference(
@@ -19,26 +22,7 @@ def visualize_inference(
     threshold: float = 0.5,
     mode: str = "all",
 ):
-    """
-    Generate inference-only visualizations for VAAS.
-
-     Parameters
-    ----------
-    mode : str
-        Visualization mode:
-        - "all"     : Px heatmap + Px binary + Fx attention (default)
-        - "px"      : Continuous Px heatmap only
-        - "binary"  : Binary Px anomaly map only
-        - "fx"      : Fx attention overlay only
-
-    Produces:
-      - Px anomaly heatmap
-      - Px binary anomaly map
-      - Fx attention overlay
-      - Hybrid anomaly score gauge
-
-    This function is ground-truth free and intended for inference use only.
-    """
+    torch, _ = require_torch()
 
     img_resized = img.resize((224, 224))
     img_np = np.array(img_resized)
@@ -77,15 +61,15 @@ def visualize_inference(
     panels = [img_np]
     titles = ["Image"]
 
-    if mode in ["px", "all"]:
+    if mode in {"px", "all"}:
         panels.append(overlay_px)
         titles.append("Px Heatmap")
 
-    if mode in ["binary", "all"]:
+    if mode in {"binary", "all"}:
         panels.append(overlay_bin)
         titles.append("Px Binary")
 
-    if mode in ["fx", "all"]:
+    if mode in {"fx", "all"}:
         panels.append(overlay_fx)
         titles.append("Fx Attention")
 

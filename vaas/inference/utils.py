@@ -1,9 +1,11 @@
 import os
 
-import torch
+from vaas.utils.helpers import require_torch
 
 
 def load_px_checkpoint(model, checkpoint_dir):
+    torch, _ = require_torch()
+
     ckpt_path = os.path.join(checkpoint_dir, "best_model_px.pth")
     if not os.path.exists(ckpt_path):
         raise FileNotFoundError(f"Missing checkpoint: {ckpt_path}")
@@ -13,6 +15,8 @@ def load_px_checkpoint(model, checkpoint_dir):
 
 
 def load_ref_stats(checkpoint_dir):
+    torch, _ = require_torch()
+
     ref_path = os.path.join(checkpoint_dir, "ref_stats.pth")
     if not os.path.exists(ref_path):
         raise FileNotFoundError(f"Missing reference stats: {ref_path}")

@@ -1,21 +1,28 @@
+from __future__ import annotations
+
 import warnings
-from typing import Union
 
 import numpy as np
 from huggingface_hub import hf_hub_download
+from huggingface_hub.errors import HfHubHTTPError, RepositoryNotFoundError
 from PIL import Image
 from transformers.utils import logging as hf_logging
 
-from vaas.fx.fx_model import FxViT
-from vaas.hsm.hybrid_score import compute_scores
-from vaas.inference.utils import load_px_checkpoint, load_ref_stats
-from vaas.inference.visualize import visualize_inference
-from vaas.px.px_model import PatchConsistencySegformer
 from vaas.utils.helpers import require_torch
 
 hf_logging.set_verbosity_error()
 warnings.filterwarnings("ignore")
-torch, T = require_torch()
+
+
+torch = None
+T = None
+
+
+def _ensure_torch():
+    global torch, T
+    if torch is None or T is None:
+        torch, T = require_torch()
+    return torch, T
 
 
 class VAASPipeline:
@@ -27,10 +34,11 @@ class VAASPipeline:
         sigma_ref,
         device,
         transform,
-        alpha=0.5,
+        alpha: float = 0.5,
     ):
-        self.device = device
+        torch, _ = _ensure_torch()
 
+        self.device = device
         self.model_px = model_px.to(device)
         self.model_fx = model_fx.to(device)
 
@@ -39,7 +47,6 @@ class VAASPipeline:
             if torch.is_tensor(mu_ref)
             else torch.tensor(mu_ref, device=device)
         )
-
         self.sigma_ref = (
             sigma_ref.to(device)
             if torch.is_tensor(sigma_ref)
@@ -56,22 +63,22 @@ class VAASPipeline:
     def from_checkpoint(
         cls,
         checkpoint_dir: str,
-        device: str | torch.device = "cpu",
+        device: str = "cpu",
         alpha: float = 0.5,
     ):
+        torch, T = _ensure_torch()
+
         if isinstance(device, str):
             device = torch.device(device)
+
+        from vaas.fx.fx_model import FxViT
+        from vaas.inference.utils import load_px_checkpoint, load_ref_stats
+        from vaas.px.px_model import PatchConsistencySegformer
 
         model_px = PatchConsistencySegformer()
         model_fx = FxViT()
 
-        model_fx.eval()
-        model_px.eval()
-
         load_px_checkpoint(model_px, checkpoint_dir)
-        model_px = model_px.to(device)
-        model_fx = model_fx.to(device)
-
         mu_ref, sigma_ref = load_ref_stats(checkpoint_dir)
 
         transform = T.Compose(
@@ -102,18 +109,25 @@ class VAASPipeline:
         device: str = "cpu",
         alpha: float = 0.5,
     ):
-        px_path = hf_hub_download(
-            repo_id=repo_id,
-            filename="model/px_model.pth",
-        )
-        ref_path = hf_hub_download(
-            repo_id=repo_id,
-            filename="model/ref_stats.pth",
-        )
+        torch, T = _ensure_torch()
+
+        try:
+            px_path = hf_hub_download(repo_id, "model/px_model.pth")
+            ref_path = hf_hub_download(repo_id, "model/ref_stats.pth")
+        except (RepositoryNotFoundError, HfHubHTTPError) as e:
+            raise SystemExit(
+                "Failed to load VAAS model from Hugging Face.\n\n"
+                f"Repository: {repo_id}\n"
+                f"Reason: {e.__class__.__name__}\n\n"
+                "If this is a private repository, ensure you are logged in:\n"
+                "  huggingface-cli login\n"
+            ) from e
+
+        from vaas.fx.fx_model import FxViT
+        from vaas.px.px_model import PatchConsistencySegformer
 
         model_px = PatchConsistencySegformer()
-        state = torch.load(px_path, map_location="cpu")
-        model_px.load_state_dict(state)
+        model_px.load_state_dict(torch.load(px_path, map_location="cpu"))
 
         ref = torch.load(ref_path, map_location="cpu")
         mu_ref = ref["mu_ref"]
@@ -149,15 +163,9 @@ class VAASPipeline:
         mode="all",
         threshold=0.5,
     ):
-        """
-        Run inference and save a qualitative visualization.
+        _ensure_torch()
 
-        Args:
-        image: PIL Image or image path
-        save_path: output image path
-        mode: 'all', 'px', 'fx', or 'binary'
-        threshold: binarization threshold for Px map
-        """
+        from vaas.inference.visualize import visualize_inference
 
         if isinstance(image, str):
             image = Image.open(image).convert("RGB")
@@ -174,25 +182,28 @@ class VAASPipeline:
             threshold=threshold,
             mode=mode,
         )
+
         return out
 
-    @torch.no_grad()
-    def __call__(
-        self, image: str | Image.Image
-    ) -> dict[str, Union[float, "np.ndarray"]]:
+    def __call__(self, image: str | Image.Image) -> dict[str, float | np.ndarray]:
+        torch, _ = _ensure_torch()
+
+        from vaas.hsm.hybrid_score import compute_scores
+
         if isinstance(image, str):
             image = Image.open(image).convert("RGB")
 
-        s_f, s_p, s_h, anomaly_map = compute_scores(
-            img=image,
-            mask=None,
-            model_px=self.model_px,
-            vit_model=self.model_fx,
-            mu_ref=self.mu_ref,
-            sigma_ref=self.sigma_ref,
-            transform=self.transform,
-            alpha=self.alpha,
-        )
+        with torch.no_grad():
+            s_f, s_p, s_h, anomaly_map = compute_scores(
+                img=image,
+                mask=None,
+                model_px=self.model_px,
+                vit_model=self.model_fx,
+                mu_ref=self.mu_ref,
+                sigma_ref=self.sigma_ref,
+                transform=self.transform,
+                alpha=self.alpha,
+            )
 
         if torch.is_tensor(anomaly_map):
             anomaly_map = anomaly_map.detach().cpu().numpy()

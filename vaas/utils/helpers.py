@@ -1,25 +1,6 @@
 import json
 import os
 
-# def require_torch_or_exit():
-# try:
-#     import torch
-#     import torchvision.transforms as T
-
-#     return torch, T
-# except ImportError:
-#     raise SystemExit(
-#         "PyTorch is not installed.\n"
-#         "VAAS requires both PyTorch and torchvision.\n\n"
-#         "Install the correct PyTorch build "
-#         "for your system (CPU, CUDA, or ROCm):\n"
-#         "  https://pytorch.org/get-started/locally/\n\n"
-#         "Once PyTorch is installed, re-run your VAAS code."
-#     )
-
-
-# vaas/utils/helpers.py
-
 
 def require_torch():
     try:
@@ -28,13 +9,29 @@ def require_torch():
 
         return torch, T
     except ImportError as err:
-        raise ImportError(
+        raise SystemExit(
             "PyTorch is not installed.\n"
             "VAAS requires both PyTorch and torchvision.\n\n"
             "Install the correct PyTorch build for your system (CPU, CUDA, or ROCm):\n"
             "  https://pytorch.org/get-started/locally/\n\n"
             "Once PyTorch is installed, re-run your VAAS code."
         ) from err
+
+
+# def require_torch():
+#     try:
+#         import torch
+#         import torchvision.transforms as T
+#     except ImportError as err:
+#         if "torch" not in str(err):
+#             raise
+#         raise ImportError(
+#             "PyTorch is not installed.\n"
+#             "VAAS requires both PyTorch and torchvision.\n\n"
+#             "Install PyTorch from:\n"
+#             "  https://pytorch.org/get-started/locally/"
+#         ) from err
+#     return torch, T
 
 
 def save_json(data, path):

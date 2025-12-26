@@ -17,25 +17,20 @@ jobs:
       - name: Install uv
         run: pip install uv
 
-      - name: Create venv
-        run: uv venv .venv
-
       - name: Cache uv
         uses: actions/cache@v4
         with:
           path: ~/.cache/uv
-          key: uv-${{ runner.os }}-${{ hashFiles('pyproject.toml') }}
+          key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
 
-      - name: Install dependencies
-        run: |
-          uv sync
-          uv sync --group torch
-          uv sync --group dev
+      - name: Install dependencies (base only, no torch)
+        run: uv sync
 
-      - name: Install VAAS
-        run: |
-          uv pip install -e .
+      - name: Install VAAS (editable)
+        run: uv pip install -e .
 
-      - name: Run tests
-        run: |
-          uv run --active --group torch pytest -q
+      - name: Lint (ruff)
+        run: uv run ruff check .
+
+      - name: Run CI smoke tests
+        run: uv run pytest -m smoke -q
