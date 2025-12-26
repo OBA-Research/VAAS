@@ -160,7 +160,19 @@ Please see the full guidelines in **[CONTRIBUTING.md](CONTRIBUTING.md)**.
 
 ## Citation
 
-Citation will be added once the paper is published.
+To cite this work, please use:
+
+```python
+@software{vaas,
+  author       = {Bamigbade, Opeyemi and Scanlon, Mark and Sheppard, John},
+  title        = {VAAS: Vision-Attention Anomaly Scoring},
+  year         = {2025},
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.18064355},
+  url          = {https://doi.org/10.5281/zenodo.18064355}
+}
+
+```
 
 ---
 
