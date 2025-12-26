@@ -20,10 +20,24 @@ jobs:
       - name: Create venv
         run: uv venv .venv
 
-      - name: Install project (editable)
+      - name: Cache uv
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-${{ hashFiles('pyproject.toml') }}
+
+      - name: Install dependencies
+        run: |
+          set -e
+          source .venv/bin/activate
+          uv sync
+          uv sync --group torch
+          uv sync --group dev
+
+      - name: Install VAAS
         run: |
           source .venv/bin/activate
-          uv pip install -e .[dev, torch]
+          uv pip install -e .
 
       - name: Run tests
         run: |
