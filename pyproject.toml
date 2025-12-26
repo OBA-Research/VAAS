@@ -3,7 +3,7 @@ name = "vaas"
 requires-python = ">=3.10"
 dynamic = ["version"]
 description = "VAAS (Vision-Attention Anomaly Scoring) is a dual-module vision framework for image anomaly detection and localisation."
-readme = "README.md"
+readme = "pypiREADME.md"
 license-files = ["LICENSE"]
 authors = [
     { name = "Opeyemi Bamigbade" },
