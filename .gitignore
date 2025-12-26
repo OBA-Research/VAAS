@@ -47,3 +47,5 @@ uv.lock
 # OS / Misc.
 .DS_Store
 Thumbs.db
+
+*/_artifacts
