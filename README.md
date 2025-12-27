@@ -1,5 +1,14 @@
 # VAAS: Vision-Attention Anomaly Scoring
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18064355.svg)](https://doi.org/10.5281/zenodo.18064355)
+[![CI](https://github.com/OBA-Research/VAAS/actions/workflows/test.yaml/badge.svg)](https://github.com/OBA-Research/VAAS/actions/workflows/test.yaml)
+[![PyPI](https://img.shields.io/pypi/v/vaas.svg)](https://pypi.org/project/vaas/)
+[![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Model-yellow)](https://huggingface.co/OBA-Research/vaas-v1-df2023)
+[![Python](https://img.shields.io/pypi/pyversions/vaas.svg)](https://pypi.org/project/vaas/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+
+
 VAAS (Vision-Attention Anomaly Scoring) is a dual-module vision framework for image anomaly detection and localisation.  
 It combines global attention-based reasoning with patch-level self-consistency analysis to produce interpretable anomaly scores and dense anomaly maps.
 
@@ -7,8 +16,9 @@ This repository provides the **inference-ready implementation** of VAAS for rese
 
 ---
 
-## Paper
-The conference paper link will be added upon publication.
+## Read Paper
+- [Arxiv version](https://arxiv.org/abs/2512.15512)
+- [Conference version](https://arxiv.org/abs/2512.15512)
 
 ---
 
@@ -62,7 +72,7 @@ pipeline = VAASPipeline.from_pretrained(
 img = Image.open("image.jpg").convert("RGB")
 out = pipeline(img)
 
-print(out["S_H"])
+print(out)
 ```
 
 ### Output format
@@ -100,7 +110,11 @@ This will save a figure containing:
 * Global attention overlays
 * A gauge-style visualization of the hybrid anomaly score
 
-![Inference with visual example](./methodology.png)
+For examples:
+
+![Inference with visual example](docs/visualizations/COCO_DF_I000B00000_00966250_vaas.png)
+![Inference with visual example](docs/visualizations/COCO_DF_S000B00000_00120651_vaas.png)
+![Inference with visual example](docs/visualizations/COCO_DF_C110B00000_00539519_vaas.png)
 
 ---
 

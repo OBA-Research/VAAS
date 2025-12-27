@@ -66,6 +66,11 @@ def main():
     dst_pipeline_dir = os.path.join(output_dir, "vaas", "inference")
 
     os.makedirs(dst_pipeline_dir, exist_ok=True)
+    vaas_root = os.path.join(output_dir, "vaas")
+    os.makedirs(vaas_root, exist_ok=True)
+
+    open(os.path.join(vaas_root, "__init__.py"), "w").close()
+    open(os.path.join(dst_pipeline_dir, "__init__.py"), "w").close()
 
     shutil.copy(
         os.path.join(src_pipeline_dir, "pipeline.py"),
@@ -80,6 +85,19 @@ def main():
     shutil.copy(
         os.path.join(src_pipeline_dir, "visualize.py"),
         os.path.join(dst_pipeline_dir, "visualize.py"),
+    )
+
+    src_doc_dir = os.path.join("docs")
+    dst_doc_dir = os.path.join(output_dir, "docs")
+
+    if os.path.exists(dst_doc_dir):
+        shutil.rmtree(dst_doc_dir)
+
+    shutil.copytree(src_doc_dir, dst_doc_dir)
+
+    shutil.copy(
+        "hfREADME.md",
+        os.path.join(output_dir, "README.md"),
     )
 
     api.upload_folder(
