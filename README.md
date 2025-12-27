@@ -49,6 +49,11 @@ These combine to produce:
 ```
 pip install vaas
 ```
+OR
+
+```
+uv pip install vaas
+```
 
 **Important:** VAAS requires **PyTorch + torchvision**.  
 Install the correct PyTorch build for your system (CPU / CUDA / ROCm):
@@ -57,46 +62,60 @@ https://pytorch.org/get-started/locally/
 
 ---
 
-## Basic Inference Example
+## Usage
+
+
+### 1. Basic inference on local and online images
 
 ```python
 from vaas.inference.pipeline import VAASPipeline
 from PIL import Image
+import requests
+from io import BytesIO
 
 pipeline = VAASPipeline.from_pretrained(
     "OBA-Research/vaas-v1-df2023",
     device="cpu",
-    alpha=0.5,
+    alpha=0.5
 )
 
-img = Image.open("image.jpg").convert("RGB")
-out = pipeline(img)
+# # Option A: Using a local image
+# image = Image.open("example.jpg").convert("RGB")
+# result = pipeline(image)
 
-print(out)
+# Option B: Using an online image
+url = "https://raw.githubusercontent.com/OBA-Research/VAAS/main/examples/images/COCO_DF_C110B00000_00539519.jpg"
+image = Image.open(BytesIO(requests.get(url).content)).convert("RGB")
+result = pipeline(image)
+
+print(result)
+anomaly_map = result["anomaly_map"]
+
 ```
 
-### Output format
+#### Output Format
 
 ```python
 {
-    "S_F": float,
-    "S_P": float,
-    "S_H": float,
-    "anomaly_map": numpy.ndarray  # shape (224, 224)
+  "S_F": float,
+  "S_P": float,
+  "S_H": float,
+  "anomaly_map": numpy.ndarray  # shape (224, 224)
 }
 ```
 
-## Inference with visual explanation
+### 2. Inference with visual explanation
 
 VAAS can also generate a qualitative visualization combining:
 
-- Patch-level anomaly heatmaps (Px)
-- Global attention maps (Fx)
-- Final hybrid anomaly score (S_H)
+* Patch-level anomaly heatmaps (Px)
+* Global attention maps (Fx)
+* Final hybrid anomaly score (S_H)
 
 ```python
+
 pipeline.visualize(
-    image="image.jpg",
+    image=image,
     save_path="vaas_visualization.png",
     mode="all",        # options: "all", "px", "binary", "fx"
     threshold=0.5,
@@ -118,19 +137,32 @@ For examples:
 
 ---
 
-## Model Variants
+## Model Variants (Planned & Released)
 
-| Version | Training Data | Description |
-|--------|----------------|-------------|
-| v1     | DF2023 (10%)   | Initial public inference release |
+| Version | Training Data | Description | Hugging Face Model |
+|--------|----------------|-------------|--------------------|
+| v1     | DF2023 (10%)   | Initial public inference release | [vaas-v1-df2023](https://huggingface.co/OBA-Research/vaas-v1-df2023) |
+| v2     | DF2023 (≈50%)  | Planned scale-up experiment | TBD |
+| v3     | DF2023 (100%)  | Full-dataset training (planned) | TBD |
+| v4     | DF2023 + CASIA2.0 | Cross-dataset study (planned) | TBD |
+| v5     | Other datasets | Exploratory generalisation study | TBD |
 
-Future updates will include:
 
-- full DF2023 training  
-- cross-dataset benchmarking  
-- improved calibration  
-- more efficient backbones  
-- richer visualisation modes  
+These planned variants aim to study the effect of training scale, dataset diversity, and cross-dataset benchmarking on generalisation and score calibration.
+
+## Roadmap: Inference API 
+
+- Batch inference and folder-level CLI  
+- Richer visualisation modes  
+- More efficient backbones  
+- Expose rich image embeddings
+- Cross-dataset inferencing 
+- Model compression  
+- Extended anomaly-map visualisation  
+- ONNX / TorchScript export  
+- Use cases with Streamlit / Gradio
+
+---
 
 ---
 
@@ -138,29 +170,13 @@ Future updates will include:
 
 A set of runnable example notebooks covering:
 
-
-These cover:
-
 - Quick-start inference with VAAS  
 - Visualising anomaly maps  
 - Batch / folder inference  
 - How S_F, S_P, and S_H are combined  
 - Device selection (CPU, CUDA, MPS)
 
-If you would like to contribute a notebook, see  
-**[CONTRIBUTING.md](CONTRIBUTING.md)** for guidelines.
-
----
-
-## Roadmap
-
-- Cross-dataset evaluation  
-- Larger-scale training  
-- Model compression  
-- Batch inference and folder-level CLI  
-- Extended anomaly-map visualisation  
-- Streamlit/Gradio demo (optional)  
-- ONNX / TorchScript export  
+If you would like to contribute a notebook, see  **[CONTRIBUTING.md](CONTRIBUTING.md)** for guidelines.
 
 ---
 
