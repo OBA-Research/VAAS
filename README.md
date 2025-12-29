@@ -1,18 +1,22 @@
+![VAAS Methodology](docs/static/VAAS.png)
+
+---
 # VAAS: Vision-Attention Anomaly Scoring
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18064355.svg)](https://doi.org/10.5281/zenodo.18064355)
 [![CI](https://github.com/OBA-Research/VAAS/actions/workflows/test.yaml/badge.svg)](https://github.com/OBA-Research/VAAS/actions/workflows/test.yaml)
-[![PyPI](https://img.shields.io/pypi/v/vaas.svg)](https://pypi.org/project/vaas/)
 [![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Model-yellow)](https://huggingface.co/OBA-Research/vaas-v1-df2023)
+[![PyPI](https://img.shields.io/pypi/v/vaas.svg)](https://pypi.org/project/vaas/)
+![PyPI Downloads](https://img.shields.io/pypi/dm/vaas?label=PyPI%20downloads)
 [![Python](https://img.shields.io/pypi/pyversions/vaas.svg)](https://pypi.org/project/vaas/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 
+## What is VAAS?
 
-VAAS (Vision-Attention Anomaly Scoring) is a dual-module vision framework for image anomaly detection and localisation.  
-It combines global attention-based reasoning with patch-level self-consistency analysis to produce interpretable anomaly scores and dense anomaly maps.
+VAAS is an inference-first, research-driven dual-module vision library for image integrity analysis. It integrates Vision Transformer Attention Mechanisms with patch-level self-consistency analysis to enable fine-grained localization and detection of visual inconsistencies across diverse image analysis tasks.
 
-This repository provides the **inference-ready implementation** of VAAS for research engineers and practitioners.
+*This repository provides the **inference-ready implementation** of VAAS for research engineers and practitioners.*
 
 ---
 
@@ -24,7 +28,7 @@ This repository provides the **inference-ready implementation** of VAAS for rese
 
 ## Architecture
 
-![VAAS Methodology](docs/architecture_diagrams/methodology.png)
+![VAAS Methodology](docs/static/methodology.png)
 
 VAAS integrates two complementary components:
 
@@ -46,13 +50,14 @@ These combine to produce:
 
 ## Installation
 
-```
+```bash
 pip install vaas
 ```
-OR
 
-```
-uv pip install vaas
+Or if you prefer using uv:
+
+```bash
+uv add vaas
 ```
 
 **Important:** VAAS requires **PyTorch + torchvision**.  
