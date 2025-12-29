@@ -5,8 +5,9 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18064355.svg)](https://doi.org/10.5281/zenodo.18064355)
 [![CI](https://github.com/OBA-Research/VAAS/actions/workflows/test.yaml/badge.svg)](https://github.com/OBA-Research/VAAS/actions/workflows/test.yaml)
-[![PyPI](https://img.shields.io/pypi/v/vaas.svg)](https://pypi.org/project/vaas/)
 [![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Model-yellow)](https://huggingface.co/OBA-Research/vaas-v1-df2023)
+[![PyPI](https://img.shields.io/pypi/v/vaas.svg)](https://pypi.org/project/vaas/)
+![PyPI Downloads](https://img.shields.io/pypi/dm/vaas?label=PyPI%20downloads)
 [![Python](https://img.shields.io/pypi/pyversions/vaas.svg)](https://pypi.org/project/vaas/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
