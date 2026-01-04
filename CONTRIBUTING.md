@@ -126,20 +126,11 @@ Incomplete reports may be closed.
 
 ## 7. Example Notebooks (Optional Contributions)
 
-Notebook contributions are welcome and encouraged.
+Notebook contributions are welcome and encouraged mostly around how you are using VAAS in your projects.
 
-Suggested topics:
+**Towards notebook PR:**
 
-- Basic inference walkthrough
-- Visualising anomaly maps
-- Batch / folder-level inference
-- Effect of α on anomaly scores
-- Device selection (CPU / CUDA / MPS)
-- Hugging Face `from_pretrained` usage
-
-**Notebook rules:**
-
-- Place under `examples/notebooks/`
+- Place under `examples/notebooks/<vaas version>`
 - Must run top-to-bottom without manual edits
 - No training code
 - Lightweight runtime
