@@ -8,12 +8,14 @@ This document defines the **rules and expectations** for contributing to the VAA
 ## Important Design Constraints (Read First)
 
 - **PyTorch must NOT be imported at import-time of public APIs**
-  - Public entry points (e.g. `vaas.inference.pipeline`) must remain importable without torch.
+  - Public entry points (e.g. `vaas.inference.pipeline` and other modules imported by users)
+  must remain importable without torch.
 - **PyTorch may be imported freely inside internal logic**
   - Internal functions, methods, and execution paths may require torch.
 - Lazy-loading is a **hard requirement**, not a preference.
-
-If a change breaks CI-safe imports, it will not be accepted.
+- Any change that modifies the public API or inference behavior must include
+at least one passing test demonstrating correctness.
+- Changes and PR should be CI-safe. If a change breaks CI-safe imports, it will not be accepted.
 
 ---
 

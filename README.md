@@ -15,7 +15,7 @@
 
 ## What is VAAS?
 
-VAAS is an inference-first, research-driven dual-module vision library for image integrity analysis. It integrates Vision Transformer Attention Mechanisms with patch-level self-consistency analysis to enable fine-grained localization and detection of visual inconsistencies across diverse image analysis tasks.
+VAAS is an inference-first, research-driven dual-module vision library for image integrity analysis. It integrates Vision Transformer Attention Mechanisms with patch-level self-consistency analysis to enable fine-grained localization and detection of visual inconsistencies across diverse image integrity analysis tasks
 
 *This repository provides the **inference-ready implementation** of VAAS for research engineers and practitioners.*
 
@@ -45,7 +45,7 @@ These combine to produce:
 - `S_P` — patch-level plausibility  
 - `S_H` — hybrid anomaly score (final)
 
-`S_H` is continuous and reflects anomaly **intensity**, not just presence.
+`S_H` is continuous and reflects relative anomaly **intensity**, not a binary decision.
 
 ---
 
@@ -137,7 +137,8 @@ This will save a figure containing:
 * Global attention overlays
 * A gauge-style visualization of the hybrid anomaly score
 
-For examples:
+The examples below illustrate realistic manipulation scenarios where visual
+integrity is compromised through structural or semantic inconsistencies.
 
 ![Inference with visual example](docs/visualizations/COCO_DF_I000B00000_00966250_vaas.png)
 ![Inference with visual example](docs/visualizations/Alcaraz_vaas.png)
@@ -179,8 +180,18 @@ If you would like to contribute a notebook, see  **[CONTRIBUTING.md](CONTRIBUTIN
 | v5     | Other datasets | Exploratory generalisation study | TBD | TBD |
 
 
-
 These planned variants aim to study the effect of training scale, dataset diversity, and cross-dataset benchmarking on generalisation and score calibration.
+
+### Notes on Model Scope
+
+VAAS models may be trained with emphasis on different classes of visual
+integrity violations (e.g. splicing, identity manipulation, text editing,
+structural deformation, or AI-generated artifacts).
+
+These variants share the same inference API and scoring framework, but may
+differ in training data composition and calibration depending on the target
+integrity focus.
+
 
 ## Reported Quantitative Performance
 
@@ -203,7 +214,7 @@ interpreted in conjunction with the methodology described in
 the paper.
 
 
-## Roadmap: Inference API 
+## Roadmap (Inference-Focused)
 
 - Batch inference and folder-level CLI  
 - Richer visualisation modes  
