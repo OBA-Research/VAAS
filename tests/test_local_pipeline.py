@@ -32,3 +32,8 @@ def test_local_pipeline():
 
     assert isinstance(result, dict)
     assert {"S_F", "S_P", "S_H", "anomaly_map"} <= result.keys()
+    print(pipeline.variant)
+    print(pipeline.metadata)
+
+
+test_local_pipeline()

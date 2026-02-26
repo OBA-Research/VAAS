@@ -1,11 +1,10 @@
 # Contributing to VAAS
 
 Thank you for your interest in improving **VAAS (Vision-Attention Anomaly Scoring)**.
-This document defines the **rules and expectations** for contributing to the VAAS codebase.
 
 ---
 
-## Important Design Constraints (Read First)
+## Few Important Design Constraints (Read First)
 
 - **PyTorch must NOT be imported at import-time of public APIs**
   - Public entry points (e.g. `vaas.inference.pipeline` and other modules imported by users)
@@ -64,7 +63,7 @@ make build         # build wheel + sdist
 
 Formatting and linting are enforced with **ruff**.
 
-Before submitting any change, ensure:
+Before submitting any change, please ensure:
 
 ```bash
 make format
@@ -82,7 +81,7 @@ pre-commit run --all-files
 
 ## 4. Testing Requirements
 
-All contributions must pass:
+Tests are passing:
 
 ```bash
 make test-smoke

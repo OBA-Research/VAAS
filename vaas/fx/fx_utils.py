@@ -19,8 +19,7 @@ def compute_reference_stats(dataset, vit_model, device, transform, max_samples=2
     # Case 1: Authentic samples available
     if len(authentic_indices) > 0:
         print(
-            f"Found {len(authentic_indices)}"
-            "authentic samples for reference statistics."
+            f"Found {len(authentic_indices)}authentic samples for reference statistics."
         )
         selected_indices = random.sample(
             authentic_indices, min(len(authentic_indices), max_samples)
