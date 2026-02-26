@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import warnings
 
 import numpy as np
@@ -12,7 +13,6 @@ from vaas.utils.helpers import require_torch
 
 hf_logging.set_verbosity_error()
 warnings.filterwarnings("ignore")
-
 
 torch = None
 T = None
@@ -35,6 +35,8 @@ class VAASPipeline:
         device,
         transform,
         alpha: float = 0.5,
+        variant: str | None = None,
+        metadata: dict | None = None,
     ):
         torch, _ = _ensure_torch()
 
@@ -55,6 +57,8 @@ class VAASPipeline:
 
         self.transform = transform
         self.alpha = alpha
+        self.variant = variant
+        self.metadata = metadata or {}
 
         self.model_px.eval()
         self.model_fx.eval()
@@ -65,6 +69,8 @@ class VAASPipeline:
         checkpoint_dir: str,
         device: str = "cpu",
         alpha: float = 0.5,
+        variant: str | None = None,
+        metadata: dict | None = None,
     ):
         torch, T = _ensure_torch()
 
@@ -100,6 +106,8 @@ class VAASPipeline:
             device=device,
             transform=transform,
             alpha=alpha,
+            variant=variant or "local-checkpoint",
+            metadata=metadata or {"source": "local"},
         )
 
     @classmethod
@@ -107,21 +115,44 @@ class VAASPipeline:
         cls,
         repo_id: str,
         device: str = "cpu",
-        alpha: float = 0.5,
+        alpha: float | None = None,
+        model_variant: str | None = None,
     ):
         torch, T = _ensure_torch()
 
+        revision = model_variant  # map domain concept to HF revision
+
         try:
-            px_path = hf_hub_download(repo_id, "model/px_model.pth")
-            ref_path = hf_hub_download(repo_id, "model/ref_stats.pth")
+            px_path = hf_hub_download(
+                repo_id=repo_id,
+                filename="model/px_model.pth",
+                revision=revision,
+            )
+
+            ref_path = hf_hub_download(
+                repo_id=repo_id,
+                filename="model/ref_stats.pth",
+                revision=revision,
+            )
+
+            config_path = hf_hub_download(
+                repo_id=repo_id,
+                filename="model/config.json",
+                revision=revision,
+            )
+
         except (RepositoryNotFoundError, HfHubHTTPError) as e:
             raise SystemExit(
                 "Failed to load VAAS model from Hugging Face.\n\n"
                 f"Repository: {repo_id}\n"
+                f"Revision: {revision}\n"
                 f"Reason: {e.__class__.__name__}\n\n"
                 "If this is a private repository, ensure you are logged in:\n"
                 "  huggingface-cli login\n"
             ) from e
+
+        with open(config_path) as f:
+            config = json.load(f)
 
         from vaas.fx.fx_model import FxViT
         from vaas.px.px_model import PatchConsistencySegformer
@@ -137,7 +168,7 @@ class VAASPipeline:
 
         transform = T.Compose(
             [
-                T.Resize((224, 224)),
+                T.Resize(tuple(config.get("input_size", [224, 224]))),
                 T.ToTensor(),
                 T.Normalize(
                     mean=(0.485, 0.456, 0.406),
@@ -145,6 +176,9 @@ class VAASPipeline:
                 ),
             ]
         )
+
+        if alpha is None:
+            alpha = config.get("alpha", 0.5)
 
         return cls(
             model_px=model_px,
@@ -154,6 +188,8 @@ class VAASPipeline:
             device=device,
             transform=transform,
             alpha=alpha,
+            variant=config.get("variant"),
+            metadata=config,
         )
 
     def visualize(

@@ -81,11 +81,16 @@ from PIL import Image
 import requests
 from io import BytesIO
 
+repo_id = "OBA-Research/vaas"
+model_variant = "v1-base-df2023" # v1-medium-df2023 and v1-large-df2023 are other model variants you can use.
+
 pipeline = VAASPipeline.from_pretrained(
-    "OBA-Research/vaas-v1-df2023",
+    repo_id,
     device="cpu",
-    alpha=0.5
+    alpha=0.5,
+    model_variant=model_variant,
 )
+
 
 # # Option A: Using a local image
 # image = Image.open("example.jpg").convert("RGB")
@@ -171,12 +176,12 @@ If you would like to contribute a notebook, see  **[CONTRIBUTING.md](CONTRIBUTIN
 
 ## Model Variants (Planned & Released)
 
-| Version | Training Data | Description | Reported Evaluation (Paper) | Hugging Face Model |
+| Models | Training Data | Description | Reported Evaluation (Paper) | Hugging Face Model |
 |--------|----------------|-------------|-----------------------------|--------------------|
-| v1     | DF2023 (10%)   | Initial public inference release | F1 / IoU reported on DF2023 & CASIA v2.0 | [vaas-v1-df2023](https://huggingface.co/OBA-Research/vaas-v1-df2023) |
-| v2     | DF2023 (≈50%)  | Planned scale-up experiment | Planned | TBD |
-| v3     | DF2023 (100%)  | Full-dataset training (planned) | Planned | TBD |
-| v4     | DF2023 + CASIA2.0 | Cross-dataset study (planned) | Cross-dataset eval planned | TBD |
+| vaas-v1-base-df2023     | DF2023 (10%)   | Initial public inference release | [F1 & IoU are reported in research paper](https://arxiv.org/pdf/2512.15512) | [vaas-v1-base-df2023](https://huggingface.co/OBA-Research/vaas) |
+| vaas-v1-medium-df2023     | DF2023 (≈50%)  | Scale-up experiment | 5% better than base | [vaas-v1-medium-df2023](https://huggingface.co/OBA-Research/vaas/tree/v1-medium-df2023) |
+| vaas-v1-large-df2023     | DF2023 (100%)  | Full-dataset training | 9% better than medium | [vaas-v1-large-df2023](https://huggingface.co/OBA-Research/vaas/tree/v1-large-df2023) |
+| v4     | DF2023 + Others | Cross-dataset study (planned) | Cross-dataset eval planned | TBD |
 | v5     | Other datasets | Exploratory generalisation study | TBD | TBD |
 
 
@@ -193,27 +198,6 @@ differ in training data composition and calibration depending on the target
 integrity focus.
 
 
-## Reported Quantitative Performance
-
-Quantitative detection and localisation metrics for VAAS are
-reported in the accompanying [paper](https://arxiv.org/abs/2512.15512) under a defined evaluation
-protocol.
-
-Under the experimental setup described in the [paper](https://arxiv.org/abs/2512.15512):
-
-- **DF2023 (10% subset)**  
-  F1: 94.9%  
-  IoU: 91.1%
-
-- **CASIA v2.0**  
-  F1: 94.1%  
-  IoU: 89.0%
-
-These metrics are dataset- and protocol-specific and should be
-interpreted in conjunction with the methodology described in
-the paper.
-
-
 ## Roadmap (Inference-Focused)
 
 - Batch inference and folder-level CLI  
@@ -224,7 +208,7 @@ the paper.
 - Model compression  
 - Extended anomaly-map visualisation  
 - ONNX / TorchScript export  
-- Use cases with Streamlit / Gradio
+- Use cases and extentions
 
 ---
 
@@ -242,6 +226,8 @@ Please see the full guidelines in **[CONTRIBUTING.md](CONTRIBUTING.md)**.
 
 If you use VAAS in your research, please cite both the software and the associated paper as appropriate.
 
+### Software Citation
+
 ```python
 @software{vaas,
   title        = {VAAS: Vision-Attention Anomaly Scoring},
@@ -253,6 +239,8 @@ If you use VAAS in your research, please cite both the software and the associat
 }
 
 ```
+
+### Paper Citation
 
 ```python
 @article{bamigbade2025vaas,

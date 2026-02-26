@@ -11,6 +11,29 @@ authors = [
     { name = "John Sheppard" },
 ]
 
+keywords = [
+    "anomaly detection",
+    "computer vision",
+    "vision transformers",
+    "deep learning",
+    "image forensics",
+    "representation learning",
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+
 dependencies = [
   "transformers>=4.40",
   "numpy",
@@ -73,4 +96,9 @@ lint.select = [
 quote-style = "double"
 indent-style = "space"
 
-
+[project.urls]
+Homepage = "https://github.com/OBA-Research/VAAS"
+Repository = "https://github.com/OBA-Research/VAAS"
+Documentation = "https://github.com/OBA-Research/VAAS#readme"
+Issues = "https://github.com/OBA-Research/VAAS/issues"
+HuggingFace = "https://huggingface.co/OBA-Research/vaas"

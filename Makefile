@@ -32,11 +32,9 @@ test-integration:
 	uv venv .venv_test
 	. .venv_test/bin/activate && \
 		uv sync && \
-		uv sync --group torch && \
-		uv sync --group dev && \
-		uv pip install dist/*.whl pytest && \
+		uv sync --group torch --group dev
+		uv pip install -e . && \
 		uv run --active pytest -m integration -v ; \
-	deactivate
 	rm -rf .venv_test
 
 

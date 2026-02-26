@@ -10,12 +10,14 @@ def test_vaas_pipeline_smoke():
 
     from vaas.inference.pipeline import VAASPipeline
 
-    repo_id = "OBA-Research/vaas-v1-df2023"
+    repo_id = "OBA-Research/vaas"
+    model_variant = "v1-base-df2023"
 
     pipeline = VAASPipeline.from_pretrained(
         repo_id,
         device="cpu",
         alpha=0.5,
+        model_variant=model_variant,
     )
 
     img = Image.fromarray(
@@ -35,3 +37,7 @@ def test_vaas_pipeline_smoke():
     anomaly_map = result["anomaly_map"]
     assert isinstance(anomaly_map, np.ndarray)
     assert anomaly_map.ndim == 2
+    print(pipeline.metadata)
+
+
+test_vaas_pipeline_smoke()

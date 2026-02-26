@@ -11,20 +11,42 @@ from vaas.inference.pipeline import VAASPipeline
 
 def main():
     parser = argparse.ArgumentParser("Publish VAAS model to Hugging Face")
+
     parser.add_argument("--checkpoint-dir", type=str, required=True)
     parser.add_argument("--repo-id", type=str, required=True)
     parser.add_argument("--private", action="store_true")
     parser.add_argument("--alpha", type=float, default=0.5)
     parser.add_argument("--device", type=str, default="cpu")
+
+    parser.add_argument("--variant-name", type=str, required=True)
+    parser.add_argument("--dataset-name", type=str, required=True)
+    parser.add_argument("--dataset-fraction", type=str, required=True)
+    parser.add_argument("--architecture-version", type=str, default="v1")
+
     args = parser.parse_args()
 
+    # Deterministic revision generation
+    revision = (
+        f"{args.architecture_version}-{args.variant_name}-{args.dataset_name.lower()}"
+    )
+
     output_dir = "hf_artifact"
-    os.makedirs(output_dir, exist_ok=True)
+
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+
+    os.makedirs(output_dir)
 
     pipeline = VAASPipeline.from_checkpoint(
         checkpoint_dir=args.checkpoint_dir,
         device=args.device,
         alpha=args.alpha,
+        variant=args.variant_name,
+        metadata={
+            "architecture_version": args.architecture_version,
+            "dataset": args.dataset_name,
+            "dataset_fraction": args.dataset_fraction,
+        },
     )
 
     model_path = os.path.join(output_dir, "model")
@@ -45,7 +67,11 @@ def main():
 
     config = {
         "architecture": "VAAS",
-        "version": "v1",
+        "architecture_version": args.architecture_version,
+        "revision": revision,
+        "variant": args.variant_name,
+        "dataset": args.dataset_name,
+        "dataset_fraction": args.dataset_fraction,
         "alpha": args.alpha,
         "input_size": [224, 224],
         "px_checkpoint": "px_model.pth",
@@ -57,56 +83,29 @@ def main():
         json.dump(config, f, indent=2)
 
     api = HfApi()
-    try:
-        create_repo(args.repo_id, private=args.private, exist_ok=True)
-    except Exception as e:
-        print(f"Repository creation skipped or failed: {e}")
 
-    src_pipeline_dir = os.path.join("vaas", "inference")
-    dst_pipeline_dir = os.path.join(output_dir, "vaas", "inference")
+    # Create revision branch if it does not exist
+    create_repo(args.repo_id, private=args.private, exist_ok=True)
 
-    os.makedirs(dst_pipeline_dir, exist_ok=True)
-    vaas_root = os.path.join(output_dir, "vaas")
-    os.makedirs(vaas_root, exist_ok=True)
-
-    open(os.path.join(vaas_root, "__init__.py"), "w").close()
-    open(os.path.join(dst_pipeline_dir, "__init__.py"), "w").close()
-
-    shutil.copy(
-        os.path.join(src_pipeline_dir, "pipeline.py"),
-        os.path.join(dst_pipeline_dir, "pipeline.py"),
-    )
-
-    shutil.copy(
-        os.path.join(src_pipeline_dir, "utils.py"),
-        os.path.join(dst_pipeline_dir, "utils.py"),
-    )
-
-    shutil.copy(
-        os.path.join(src_pipeline_dir, "visualize.py"),
-        os.path.join(dst_pipeline_dir, "visualize.py"),
-    )
-
-    src_doc_dir = os.path.join("docs")
-    dst_doc_dir = os.path.join(output_dir, "docs")
-
-    if os.path.exists(dst_doc_dir):
-        shutil.rmtree(dst_doc_dir)
-
-    shutil.copytree(src_doc_dir, dst_doc_dir)
-
-    shutil.copy(
-        "hfREADME.md",
-        os.path.join(output_dir, "README.md"),
+    api.create_branch(
+        repo_id=args.repo_id,
+        branch=revision,
+        exist_ok=True,
     )
 
     api.upload_folder(
         folder_path=output_dir,
         repo_id=args.repo_id,
         repo_type="model",
+        revision=revision,
+        create_pr=False,
     )
 
-    print(f"Published VAAS model to https://huggingface.co/{args.repo_id}")
+    print(
+        f"Published VAAS {args.variant_name} "
+        f"(revision={revision}) "
+        f"to https://huggingface.co/{args.repo_id}"
+    )
 
 
 if __name__ == "__main__":
