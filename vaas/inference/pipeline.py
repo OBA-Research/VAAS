@@ -158,7 +158,8 @@ class VAASPipeline:
         from vaas.px.px_model import PatchConsistencySegformer
 
         model_px = PatchConsistencySegformer()
-        model_px.load_state_dict(torch.load(px_path, map_location="cpu"))
+        state_dict = torch.load(px_path, map_location="cpu")
+        model_px.load_state_dict(state_dict, strict=False)
 
         ref = torch.load(ref_path, map_location="cpu")
         mu_ref = ref["mu_ref"]
@@ -222,6 +223,16 @@ class VAASPipeline:
         return out
 
     def __call__(self, image: str | Image.Image) -> dict[str, float | np.ndarray]:
+        out = self.forward_detailed(image)
+
+        return {
+            "S_F": out["S_F"],
+            "S_P": out["S_P"],
+            "S_H": out["S_H"],
+            "anomaly_map": out["anomaly_map"],
+        }
+
+    def forward_detailed(self, image: str | Image.Image):
         torch, _ = _ensure_torch()
 
         from vaas.hsm.hybrid_score import compute_scores
@@ -249,4 +260,69 @@ class VAASPipeline:
             "S_P": float(s_p),
             "S_H": float(s_h),
             "anomaly_map": anomaly_map,
+            "variant": self.variant,
+            "metadata": self.metadata,
         }
+
+    def extract_patch_scores(self, image: str | Image.Image):
+        torch, _ = _ensure_torch()
+
+        if isinstance(image, str):
+            image = Image.open(image).convert("RGB")
+
+        x = self.transform(image).unsqueeze(0).to(self.device)
+
+        with torch.no_grad():
+            vit_out = self.model_fx(x)
+            fx_tokens = vit_out.last_hidden_state
+
+            out_px = self.model_px(x, fx_tokens)
+            logits = out_px["logits"]
+
+            logits = torch.nn.functional.interpolate(
+                logits,
+                size=(224, 224),
+                mode="bilinear",
+                align_corners=False,
+            )
+
+            scores = torch.sigmoid(logits).squeeze()
+
+        if torch.is_tensor(scores):
+            scores = scores.detach().cpu().numpy()
+
+        return scores
+
+    def extract_features(self, image: str | Image.Image):
+        torch, _ = _ensure_torch()
+
+        if isinstance(image, str):
+            image = Image.open(image).convert("RGB")
+
+        x = self.transform(image).unsqueeze(0).to(self.device)
+
+        with torch.no_grad():
+            vit_out = self.model_fx(x)
+            fx_tokens = vit_out.last_hidden_state
+
+            px_out = self.model_px(x, fx_tokens)
+            px_tokens = px_out["px_tokens"]
+
+        cls_embedding = fx_tokens[:, 0]
+        patch_tokens = fx_tokens[:, 1:]
+
+        return {
+            "fx_cls_embedding": cls_embedding.detach().cpu().numpy(),
+            "fx_patch_tokens": patch_tokens.detach().cpu().numpy(),
+            "px_cross_attention_tokens": px_tokens.detach().cpu().numpy(),
+        }
+
+    def batch(self, images):
+        """Process a batch of images and return their anomaly scores and maps."""
+
+        results = []
+
+        for img in images:
+            results.append(self(img))
+
+        return results

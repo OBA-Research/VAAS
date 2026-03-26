@@ -15,7 +15,8 @@ def test_local_pipeline():
 
     from vaas.inference.pipeline import VAASPipeline
 
-    checkpoint_dir = "checkpoints/DF2023_VAAS_DF2023_20251217_163102"
+    # checkpoint_dir = "checkpoints/DF2023_VAAS_DF2023_20251217_163102" # old checkpoint
+    checkpoint_dir = "checkpoints/DF2023_VAAS_DF2023_20260318_105943_dataset_fract_1.0"
 
     pipeline = VAASPipeline.from_checkpoint(
         checkpoint_dir=checkpoint_dir,

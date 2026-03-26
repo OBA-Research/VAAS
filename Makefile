@@ -31,10 +31,11 @@ test-integration:
 	rm -rf .venv_test
 	uv venv .venv_test
 	. .venv_test/bin/activate && \
-		uv sync && \
-		uv sync --group torch --group dev
+		uv sync --active && \
+		uv sync --active --group torch --group dev && \
 		uv pip install -e . && \
 		uv run --active pytest -m integration -v ; \
+	deactivate
 	rm -rf .venv_test
 
 
