@@ -6,8 +6,6 @@ import shutil
 import torch
 from huggingface_hub import HfApi, create_repo
 
-from vaas.inference.pipeline import VAASPipeline
-
 
 def main():
     parser = argparse.ArgumentParser("Publish VAAS model to Hugging Face")
@@ -16,16 +14,15 @@ def main():
     parser.add_argument("--repo-id", type=str, required=True)
     parser.add_argument("--private", action="store_true")
     parser.add_argument("--alpha", type=float, default=0.5)
-    parser.add_argument("--device", type=str, default="cpu")
 
     parser.add_argument("--variant-name", type=str, required=True)
     parser.add_argument("--dataset-name", type=str, required=True)
     parser.add_argument("--dataset-fraction", type=str, required=True)
-    parser.add_argument("--architecture-version", type=str, default="v1")
+    parser.add_argument("--architecture-version", type=str, default="v2")
 
     args = parser.parse_args()
 
-    # Deterministic revision generation
+    # deterministic revision
     revision = (
         f"{args.architecture_version}-{args.variant_name}-{args.dataset_name.lower()}"
     )
@@ -37,34 +34,37 @@ def main():
 
     os.makedirs(output_dir)
 
-    pipeline = VAASPipeline.from_checkpoint(
-        checkpoint_dir=args.checkpoint_dir,
-        device=args.device,
-        alpha=args.alpha,
-        variant=args.variant_name,
-        metadata={
-            "architecture_version": args.architecture_version,
-            "dataset": args.dataset_name,
-            "dataset_fraction": args.dataset_fraction,
-        },
-    )
-
     model_path = os.path.join(output_dir, "model")
     os.makedirs(model_path, exist_ok=True)
 
+    # Load TRAINING checkpoint directly
+    ckpt_path = os.path.join(args.checkpoint_dir, "best_model_px.pth")
+    if not os.path.exists(ckpt_path):
+        raise FileNotFoundError(f"Missing checkpoint: {ckpt_path}")
+
+    state = torch.load(ckpt_path, map_location="cpu")
+
     torch.save(
-        pipeline.model_px.state_dict(),
+        state["model_state_dict"],
         os.path.join(model_path, "px_model.pth"),
     )
 
+    # Reference stats
+    ref_path = os.path.join(args.checkpoint_dir, "ref_stats.pth")
+    if not os.path.exists(ref_path):
+        raise FileNotFoundError(f"Missing reference stats: {ref_path}")
+
+    ref_stats = torch.load(ref_path, map_location="cpu")
+
     torch.save(
         {
-            "mu_ref": pipeline.mu_ref.detach().cpu(),
-            "sigma_ref": pipeline.sigma_ref.detach().cpu(),
+            "mu_ref": ref_stats["mu_ref"],
+            "sigma_ref": ref_stats["sigma_ref"],
         },
         os.path.join(model_path, "ref_stats.pth"),
     )
 
+    # Config
     config = {
         "architecture": "VAAS",
         "architecture_version": args.architecture_version,
@@ -77,14 +77,15 @@ def main():
         "px_checkpoint": "px_model.pth",
         "fx_backbone": "google/vit-base-patch16-224",
         "px_backbone": "nvidia/segformer-b1",
+        "fusion": "fx-px-cross-attention",
     }
 
     with open(os.path.join(model_path, "config.json"), "w") as f:
         json.dump(config, f, indent=2)
 
+    # Push to Hugging Face
     api = HfApi()
 
-    # Create revision branch if it does not exist
     create_repo(args.repo_id, private=args.private, exist_ok=True)
 
     api.create_branch(

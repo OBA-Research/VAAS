@@ -11,7 +11,7 @@ def load_px_checkpoint(model, checkpoint_dir):
         raise FileNotFoundError(f"Missing checkpoint: {ckpt_path}")
 
     state = torch.load(ckpt_path, map_location="cpu")
-    model.load_state_dict(state["model_state_dict"])
+    model.load_state_dict(state["model_state_dict"], strict=False)
 
 
 def load_ref_stats(checkpoint_dir):
