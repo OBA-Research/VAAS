@@ -143,7 +143,7 @@ These variants share the same inference API and scoring framework, but may diffe
 
 We welcome contributions that improve the usability, robustness, and extensibility of VAAS.
 
-See **CONTRIBUTING.md**
+See [**CONTRIBUTING.md**](https://github.com/OBA-Research/VAAS/blob/main/CONTRIBUTING.md)
 
 ---
 
@@ -187,5 +187,5 @@ MIT License
 ## Maintainers
 
 **OBA-Research**
-https://github.com/OBA-Research
-https://huggingface.co/OBA-Research
+- https://github.com/OBA-Research
+- https://huggingface.co/OBA-Research
