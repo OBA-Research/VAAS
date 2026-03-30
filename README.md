@@ -141,13 +141,13 @@ For examples:
 
 ## Documentation and Examples
 
-👉 [APIs and Usage Documentation](docs/usage/api_doc.md)
+👉 [APIs and Usage Documentation](https://github.com/OBA-Research/VAAS/blob/main/docs/usage/api_doc.md)
 
 👉 [colab notebooks](https://drive.google.com/drive/folders/1xA0OdPgz9C8OL63nfl_nlUcZ-wWeRz84?usp=sharing)
 
-👉 [v2 notebooks](examples/notebooks/vaas_v2/)
+👉 [v2 notebooks](https://github.com/OBA-Research/VAAS/tree/main/examples/notebooks/vaas_v2/)
 
-👉 [v1 notebooks](examples/notebooks/vaas_v017/)
+👉 [v1 notebooks](https://github.com/OBA-Research/VAAS/tree/main/examples/notebooks/vaas_v017)
 
 ---
 
@@ -157,9 +157,9 @@ For examples:
 
 | Models                | Training Data | Description                                       | Hugging Face                                                   |
 | --------------------- | ------------- | ------------------------------------------------- | -------------------------------------------------------------- |
-| vaas-v2-base-df2023   | DF2023 (10%)  | Lightweight inference with cross-attention fusion | https://huggingface.co/OBA-Research/vaas/tree/v2-base-df2023   |
-| vaas-v2-medium-df2023 | DF2023 (≈50%) | Balanced performance and localisation             | https://huggingface.co/OBA-Research/vaas/tree/v2-medium-df2023 |
-| vaas-v2-large-df2023  | DF2023 (100%) | Full-scale training with strongest sensitivity    | https://huggingface.co/OBA-Research/vaas/tree/v2-large-df2023  |
+| vaas-v2-base-df2023   | DF2023 (10%)  | Lightweight inference with cross-attention fusion | [v2-base-df2023](https://huggingface.co/OBA-Research/vaas/tree/v2-base-df2023)   |
+| vaas-v2-medium-df2023 | DF2023 (≈50%) | Balanced performance and localisation             | [v2-medium-df2023](https://huggingface.co/OBA-Research/vaas/tree/v2-medium-df2023) |
+| vaas-v2-large-df2023  | DF2023 (100%) | Full-scale training with strongest sensitivity    | [v2-large-df2023](https://huggingface.co/OBA-Research/vaas/tree/v2-large-df2023)  |
 
 ---
 
