@@ -151,6 +151,12 @@ For examples:
 
 ---
 
+## Kindly star and share this repo at the top if it useful
+
+![VAAS staring](docs/static/starVaas.png)
+
+---
+
 ## Model Variants
 
 ### v2 (Cross-Attention VAAS)
