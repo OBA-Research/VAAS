@@ -10,13 +10,12 @@
 [![PyPI](https://img.shields.io/pypi/v/vaas.svg)](https://pypi.org/project/vaas/)
 ![PyPI Downloads](https://img.shields.io/pypi/dm/vaas?label=PyPI%20downloads)
 [![Python](https://img.shields.io/pypi/pyversions/vaas.svg)](https://pypi.org/project/vaas/)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1tBZIMXjDLwjrbnHGNdtVgsyXoaQ2q6KK?usp=sharing)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1HOt5j6Br0I5Yqv6oeu-jqL5G_n1-lGm8?usp=sharing)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## What is VAAS?
 
-VAAS is an inference-first, research-driven dual-module vision library for image integrity analysis. It integrates Vision Transformer attention mechanisms with patch-level self-consistency analysis, with cross-attention conditioning between global and local representations, to enable fine-grained localization and detection of visual inconsistencies across diverse image integrity analysis tasks.
-
+VAAS is an inference-first, research-driven dual-module vision library for image integrity analysis. It integrates Vision Transformer attention with patch-level self-consistency analysis, with cross-attention conditioning between global and local representations.
 *This repository provides the **inference-ready implementation** of VAAS for research engineers and practitioners.*
 
 ---
@@ -25,6 +24,7 @@ VAAS is an inference-first, research-driven dual-module vision library for image
 
 * [Journal version (FSIDI / DFRWS EU 2026)](https://www.sciencedirect.com/science/article/pii/S266628172600020X)
 * [Arxiv version](https://arxiv.org/abs/2512.15512)
+* [Presentation Slides](https://opeyemibami.github.io/slides/vaas)
 
 ---
 
@@ -86,7 +86,7 @@ pipeline = VAASPipeline.from_pretrained(
     model_variant="v2-base-df2023",
 )
 
-url = "https://raw.githubusercontent.com/OBA-Research/VAAS/main/examples/images/COCO_DF_C110B00000_00539519.jpg"
+url = "https://raw.githubusercontent.com/OBA-Research/VAAS/main/examples/images/alcaraz.jpg"
 image = Image.open(BytesIO(requests.get(url).content)).convert("RGB")
 
 result = pipeline(image)
@@ -95,9 +95,65 @@ print(result)
 
 ---
 
+#### Output format
+
+```python
+{
+  "S_F": float,
+  "S_P": float,
+  "S_H": float,
+  "anomaly_map": ndarray
+}
+```
+
+---
+
+### Inference with visual explanation
+
+VAAS can also generate a qualitative visualization combining:
+
+* Patch-level anomaly heatmaps (Px)
+* Global attention maps (Fx)
+* Final hybrid anomaly score (S_H)
+
+```python
+
+pipeline.visualize(
+    image=image,
+    save_path="vaas_visualization.png",
+    mode="all",        # options: "all", "px", "binary", "fx"
+    threshold=0.5,
+)
+```
+
+This will save a figure containing:
+
+* Input image
+* Patch-level anomaly overlays
+* Global attention overlays
+* A gauge-style visualization of the hybrid anomaly score
+
+For examples:
+
+![Inference with visual example](docs/visualizations/Alcaraz_vaas.png)
+
+---
+
+## Documentation and Examples
+
+👉 [APIs and Usage Documentation](docs/usage/api_doc.md)
+
+👉 [colab notebooks](https://drive.google.com/drive/folders/1xA0OdPgz9C8OL63nfl_nlUcZ-wWeRz84?usp=sharing)
+
+👉 [v2 notebooks](examples/notebooks/vaas_v2/)
+
+👉 [v1 notebooks](examples/notebooks/vaas_v017/)
+
+---
+
 ## Model Variants
 
-### v2 (Current — Cross-Attention VAAS)
+### v2 (Cross-Attention VAAS)
 
 | Models                | Training Data | Description                                       | Hugging Face                                                   |
 | --------------------- | ------------- | ------------------------------------------------- | -------------------------------------------------------------- |
@@ -107,7 +163,7 @@ print(result)
 
 ---
 
-## Model Variants (Legacy)
+## V1 Model Variants
 
 | Models                | Training Data | Description                      | Reported Evaluation (Paper)                                                 | Hugging Face Model                                                                      |
 | --------------------- | ------------- | -------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
@@ -172,7 +228,7 @@ doi = {https://doi.org/10.1016/j.fsidi.2026.302063},
 url = {https://www.sciencedirect.com/science/article/pii/S266628172600020X},
 author = {Opeyemi Bamigbade and Mark Scanlon and John Sheppard},
 keywords = {Digital forensics, Image manipulation detection, Tamper localisation, Explainable AI, Vision transformers, Segmentation, Attention mechanisms, Anomaly scoring},
-abstract = {Recent advances in AI-driven image generation have introduced new challenges for verifying the authenticity of digital evidence in forensic investigations. Modern generative models can produce visually consistent forgeries that evade traditional detectors based on pixel or compression artefacts. Most existing approaches also lack an explicit measure of anomaly intensity, which limits their ability to quantify the severity of manipulation. This paper introduces Vision-Attention Anomaly Scoring (VAAS), a novel dual-module framework that integrates global attention-based anomaly estimation using Vision Transformers (ViT) with patch-level self-consistency scoring derived from segmentation embeddings. The hybrid formulation provides a continuous and interpretable anomaly score that reflects both the location and degree of manipulation. Evaluations on the DF2023 and CASIA v2.0 datasets demonstrate that vaas achieve competitive F1 and IoU performance, while enhancing visual explainability through attention-guided anomaly maps. The framework bridges quantitative detection with human-understandable reasoning, supporting transparent and reliable image integrity assessment. The source code for all experiments and corresponding materials for reproducing the results are available open source.}
+abstract = {Recent advances in AI-driven image generation have introduced new challenges for verifying the authenticity of digital evidence in forensic investigations. Modern generative models can produce visually consistent forgeries that evade traditional detectors based on pixel or compression artefacts. Most existing approaches also lack an explicit measure of anomaly intensity, which limits their ability to quantify the severity of manipulation. This paper introduces Vision-Attention Anomaly Scoring (VAAS), a novel dual-module framework that integrates global attention-based anomaly estimation using Vision Transformers (ViT) with patch-level self-consistency scoring derived from segmentation embeddings. The hybrid formulation provides a continuous and interpretable anomaly score that reflects both the location and degree of manipulation. Evaluations on the DF2023 and CASIA v2.0 datasets demonstrate that VAAS achieves competitive F1 and IoU performance, while enhancing visual explainability through attention-guided anomaly maps. The framework bridges quantitative detection with human-understandable reasoning, supporting transparent and reliable image integrity assessment. The source code for all experiments and corresponding materials for reproducing the results are available open source.}
 }
 ```
 
